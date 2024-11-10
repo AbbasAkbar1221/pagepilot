@@ -1,67 +1,124 @@
-let prevBtn = document.querySelector(".prev"); 
-let nextBtn = document.querySelector('.next'); 
-let ul = document.querySelector('.ul');
-let itemsContainer = document.querySelector('.items-container');
+// let prevBtn = document.querySelector(".prev");
+// let nextBtn = document.querySelector(".next");
+// let ul = document.querySelector(".ul");
+// let itemsContainer = document.querySelector(".items-container");
 
-// Sample data: let's assume you have 50 items to display, like products on an e-commerce site.
-const items = Array.from({ length: 50 }, (_, index) => `Item ${index + 1}`);
-let itemsPerPage = 5; // Number of items per page
+// // Sample data
+// const items = Array.from({ length: 100 }, (_, index) => `Item ${index + 1}`);
+// const itemsPerPage = 5;
+// let currentPage = 1;
+// const totalPages = Math.ceil(items.length / itemsPerPage);
+
+// // Function to create pagination buttons
+// const updatePagination = () => {
+//     ul.innerHTML = "";
+
+//     let startPage = Math.max(1, currentPage - 2);
+//     let endPage = Math.min(totalPages, currentPage + 2);
+
+//     for (let i = startPage; i <= endPage; i++) {
+//         ul.innerHTML += `
+//             <li>
+//                 <a href="#" class="page_number ${currentPage === i ? "active_page" : ""}" onclick="changePage(${i})">${i}</a>
+//             </li>
+//         `;
+//     }
+
+//     prevBtn.style.display = currentPage > 1 ? "block" : "none";
+//     nextBtn.style.display = currentPage < totalPages ? "block" : "none";
+// };
+
+// // Function to display items for the current page
+// const displayItems = () => {
+//     itemsContainer.innerHTML = items
+//         .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+//         .map(item => `<div class="item">${item}</div>`)
+//         .join("");
+// };
+
+// // Function to change the page
+// const changePage = (page) => {
+//     currentPage = page;
+//     updatePagination();
+//     displayItems();
+// };
+
+// // Event listeners for next and previous buttons
+// prevBtn.onclick = () => changePage(currentPage - 1);
+// nextBtn.onclick = () => changePage(currentPage + 1);
+
+// // Initialize the pagination and display
+// updatePagination();
+// displayItems();
+
+
+let prevBtn = document.querySelector(".prev");
+let nextBtn = document.querySelector(".next");
+let ul = document.querySelector(".ul");
+let itemsContainer = document.querySelector(".items-container");
+
+// Sample data
+const items = Array.from({ length: 100 }, (_, index) => `Item ${index + 1}`);
+const itemsPerPage = 5;
 let currentPage = 1;
-let totalPage = Math.ceil(items.length / itemsPerPage); // Calculate total pages
-let activePage = "";
+const totalPages = Math.ceil(items.length / itemsPerPage);
 
-let createPage = (currPage) => {
+// Function to create pagination buttons
+const updatePagination = () => {
     ul.innerHTML = "";
-    itemsContainer.innerHTML = ""; // Clear previous items
 
-    let previousPage = currPage - 2;
-    let nextPage = currPage + 2;
-
-    if (currPage == 2) previousPage++;
-    if (currPage == 1) previousPage = currPage;
-    if (currPage == totalPage - 1) nextPage--;
-    if (currPage == totalPage) nextPage = currPage;
-
-    // Populate pagination buttons
-    for (let i = previousPage; i <= nextPage; i++) {
-        if (currPage == i) {
-            activePage = "active_page";
-        } else {
-            activePage = "";
-        }
-        ul.innerHTML += `<li onclick="createPage(${i})"><a href="#" class="page_number ${activePage}">${i}</a></li>`;
+    // Show the first page
+    if (currentPage > 2) {
+        ul.innerHTML += `<li><a href="#" onclick="changePage(1)" class="page_number">1</a></li>`;
     }
 
-    // Show/hide previous and next buttons
-    prevBtn.style.display = currPage <= 1 ? "none" : "block";
-    nextBtn.style.display = currPage >= totalPage ? "none" : "block";
-
-    // Display items for the current page
-    displayItems(currPage);
-};
-
-let displayItems = (page) => {
-    const start = (page - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    const pageItems = items.slice(start, end);
-
-    pageItems.forEach(item => {
-        itemsContainer.innerHTML += `<div class="item">${item}</div>`;
-    });
-};
-
-createPage(currentPage);
-
-prevBtn.onclick = () => {
-    if (currentPage > 1) {
-        currentPage--;
-        createPage(currentPage);
+    // Add ellipsis if needed before current pages
+    if (currentPage > 3) {
+        ul.innerHTML += `<li><span class="ellipsis">...</span></li>`;
     }
+
+    // Display pages around the current page
+    for (let i = Math.max(1, currentPage - 1); i <= Math.min(totalPages, currentPage + 1); i++) {
+        ul.innerHTML += `
+            <li>
+                <a href="#" class="page_number ${currentPage === i ? "active_page" : ""}" onclick="changePage(${i})">${i}</a>
+            </li>
+        `;
+    }
+
+    // Add ellipsis if needed after current pages
+    if (currentPage < totalPages - 2) {
+        ul.innerHTML += `<li><span class="ellipsis">...</span></li>`;
+    }
+
+    // Show the last page
+    if (currentPage < totalPages - 1) {
+        ul.innerHTML += `<li><a href="#" onclick="changePage(${totalPages})" class="page_number">${totalPages}</a></li>`;
+    }
+
+    prevBtn.style.display = currentPage > 1 ? "block" : "none";
+    nextBtn.style.display = currentPage < totalPages ? "block" : "none";
 };
 
-nextBtn.onclick = () => {
-    if (currentPage < totalPage) {
-        currentPage++;
-        createPage(currentPage);
-    }
+// Function to display items for the current page
+const displayItems = () => {
+    itemsContainer.innerHTML = items
+        .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+        .map(item => `<div class="item">${item}</div>`)
+        .join("");
 };
+
+// Function to change the page
+const changePage = (page) => {
+    currentPage = page;
+    updatePagination();
+    displayItems();
+};
+
+// Event listeners for next and previous buttons
+prevBtn.onclick = () => changePage(currentPage - 1);
+nextBtn.onclick = () => changePage(currentPage + 1);
+
+// Initialize the pagination and display
+updatePagination();
+displayItems();
